@@ -1,0 +1,61 @@
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+  margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: linear-gradient(180deg, #87CEEB 0%, #A8D5A2 100%);
+  min-height: 100vh; user-select: none; color: #3E2723;
+}
+#app { max-width: 500px; margin: 0 auto; padding: 8px; min-height: 100vh; display: flex; flex-direction: column; }
+#topbar {
+  display: flex; justify-content: space-around; background: #FFF8E7;
+  border-radius: 20px; padding: 10px; font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15); margin-bottom: 8px;
+  font-size: 0.95em;
+}
+#tabs { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 8px; }
+.tab {
+  flex: 1; min-width: 68px; padding: 8px 4px; border: none;
+  background: #FFF8E7; color: #3E2723; border-radius: 12px;
+  font-size: 0.72em; font-weight: bold; cursor: pointer;
+}
+.tab.active { background: #FF8C42; color: white; }
+#content { flex: 1; }
+.grid.plots { display: grid; gap: 8px; grid-template-columns: repeat(3, 1fr); }
+.plot {
+  aspect-ratio: 1; background: #8B5A2B; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2em; position: relative; overflow: hidden; cursor: pointer;
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
+}
+.plot.empty { background: #7A5230; }
+.plot.growing { background: #5C4033; }
+.plot.ready { background: #8B6914; animation: pulse 1.2s infinite; }
+@keyframes pulse {
+  0%,100% { box-shadow: inset 0 0 0 rgba(255,215,0,0); }
+  50% { box-shadow: inset 0 0 20px rgba(255,215,0,0.8); }
+}
+.plot .progress { position: absolute; bottom: 0; left: 0; height: 5px; background: #4CAF50; transition: width 0.3s linear; }
+.card {
+  background: #FFF8E7; border-radius: 12px; padding: 10px;
+  display: flex; gap: 10px; align-items: center; margin-bottom: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.card .icon { font-size: 1.8em; }
+.card .info { flex: 1; }
+.card .info .title { font-weight: bold; font-size: 0.95em; }
+.card .info .sub { font-size: 0.75em; opacity: 0.7; }
+.card button {
+  padding: 8px 12px; border: none; background: #FF8C42; color: white;
+  border-radius: 20px; font-weight: bold; font-size: 0.8em; cursor: pointer;
+  min-width: 70px;
+}
+.card button:disabled { opacity: 0.4; }
+.card button.buy { background: #4CAF50; }
+#toast {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+  background: #3E2723; color: white; padding: 10px 20px;
+  border-radius: 20px; transition: transform 0.3s; z-index: 100; font-weight: bold;
+  font-size: 0.9em; max-width: 90%;
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+.empty-state { text-align: center; padding: 40px 20px; opacity: 0.7; }
+h2 { margin: 12px 0 8px 0; font-size: 1.05em; }
