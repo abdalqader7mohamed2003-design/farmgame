@@ -1,0 +1,68 @@
+name: Build FarmGame APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Cache keystore
+        id: keystore-cache
+        uses: actions/cache@v4
+        with:
+          path: keystore.jks
+          key: farmgame-keystore-v1
+
+      - name: Generate keystore if missing
+        if: steps.keystore-cache.outputs.cache-hit != 'true'
+        run: |
+          keytool -genkeypair -v -keystore keystore.jks \
+            -storepass farmgame123 -alias farmgame -keypass farmgame123 \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=FarmGame, O=Farm, C=IQ"
+
+      - name: Install Cordova
+        run: npm install -g cordova
+
+      - name: Create Cordova project
+        run: |
+          cordova create build com.farmgame.app FarmGame
+          cd build
+          cordova platform add android
+          rm -rf www/*
+          cp ../index.html ../style.css ../manifest.json ../service-worker.js www/
+          cp ../data.js ../systems.js ../ui.js ../main.js www/
+
+      - name: Build release APK
+        run: |
+          cd build
+          cordova build android --release -- \
+            --keystore=../keystore.jks \
+            --storePassword=farmgame123 \
+            --alias=farmgame \
+            --password=farmgame123
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: farmgame-apk
+          path: build/platforms/android/app/build/outputs/apk/release/*.apk
